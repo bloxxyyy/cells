@@ -1,7 +1,7 @@
 use raylib::prelude::*;
 
-mod test;
-pub use test::*;
+mod map;
+pub use map::*;
 
 struct Game {
     game_over: bool,
