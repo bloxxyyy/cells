@@ -1,5 +1,7 @@
 use raylib::prelude::*;
-use test;
+
+mod test;
+pub use test::*;
 
 struct Game {
     game_over: bool,
@@ -12,8 +14,9 @@ impl Default for Game {
         let game_over = false;
         let pause = false;
 
-        let mut map = Map { size: [[10; MAP_SIZE as usize]; MAP_SIZE as usize] };
+        let mut map = Map { size: [[10; test::MAP_SIZE as usize]; test::MAP_SIZE as usize] };
         map.set_map();
+        println!("{:?}", map.size);
 
         Game {
             game_over,
