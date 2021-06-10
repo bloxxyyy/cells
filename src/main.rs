@@ -1,7 +1,9 @@
 use raylib::prelude::*;
 
 mod map;
-pub use map::*;
+use map::Map;
+use map::map_part::map_part as tile;
+
 
 struct Game {
     game_over: bool,
@@ -14,9 +16,8 @@ impl Default for Game {
         let game_over = false;
         let pause = false;
 
-        let mut map = Map { size: [[10; test::MAP_SIZE as usize]; test::MAP_SIZE as usize] };
+        let mut map = Map { size: [[tile::Part {test: 0}; map::MAP_SIZE as usize]; map::MAP_SIZE as usize] };
         map.set_map();
-        println!("{:?}", map.size);
 
         Game {
             game_over,
@@ -49,4 +50,5 @@ fn update_game(game: &mut Game, rl: &RaylibHandle) {
 fn draw_game(game: &Game, rl: &mut RaylibHandle, thread: &RaylibThread) {
     let mut d = rl.begin_drawing(thread);
     d.clear_background(Color::RAYWHITE);
+    //d.draw_circle(32, 32, 8.0, Color::GRAY);
 }
