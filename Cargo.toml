@@ -8,3 +8,5 @@ edition = "2018"
 
 [dependencies]
 raylib = "3.5"
+timer = "0.2.0"
+chrono = "0.4"

@@ -1,4 +1,7 @@
 use raylib::prelude::*;
+use timer::*;
+use chrono::Duration;
+use std::sync::mpsc::channel;
 
 mod map;
 use map::Map;
@@ -30,6 +33,15 @@ impl Default for Game {
 fn main() {
     let mut game = Game::default();
     let (mut rl, thread) = raylib::init().size(640, 480).title("Cells").build();
+
+    let timer = Timer::new();
+    let (tx, rx) = channel();
+    timer.schedule_with_delay(Duration::seconds(3), move || {
+        let _ignored = tx.send(());
+    });
+    rx.recv().unwrap();
+    println!("This code has been executed after 3 seconds");
+
 
     init_game(&mut game, &rl);
 
