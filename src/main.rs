@@ -12,6 +12,17 @@ struct Game {
     map: Map,
 }
 
+struct TijdActie {
+    minuut: u32,
+    actie: fn(&mut Game),
+    geldigheids_dagen: u8,
+    vorige_dag: u32
+}
+
+// 
+// 0: Zondag
+// 0: Maandag
+
 impl Default for Game {
     fn default() -> Game {
         let game_over = false;
@@ -31,6 +42,16 @@ impl Default for Game {
         }
     }
 }
+
+const WEEK: [&str; 7] = [
+    "zondag",
+    "maandag",
+    "dinsdag",
+    "woensdag",
+    "donderdag",
+    "vrijdag",
+    "zaterdag"
+];       
 
 fn main() {
     let mut game = Game::default();
@@ -75,7 +96,15 @@ fn main() {
     // minuut gametime per seconde real life time;
 
 
-
+    let mut acties: [TijdActie; 1] = [
+        TijdActie {
+            minuut: 720,
+            actie: |game: &mut Game| {
+              // ga naar supermarkt
+            },
+            gebeurd: true
+        }          
+      ];
 
     while !rl.window_should_close() {
         let huidigetijd = now.elapsed().as_millis();
@@ -85,23 +114,44 @@ fn main() {
         let game_tijd_minuten = irl_naar_gametijd_minuten(huidigetijd);
         let game_tijd_uren = game_tijd_minuten / 60;
         let game_tijd_dagen = game_tijd_uren / 24;
+
+        let minutentijd = game_tijd_minuten % (60 * 24);
+
+        let dag_is_even = game_tijd_dagen % 2 == 0;
         
         let game_kloktijd_minuten = game_tijd_minuten % 60;
         let game_kloktijd_uren = game_tijd_uren % 24;
-        let dag_van_de_week = [
-            "zondag",
-            "maandag",
-            "dinsdag",
-            "woensdag",
-            "donderdag",
-            "vrijdag",
-            "zaterdag"
-        ][(game_tijd_dagen % 7) as usize].to_string();
+        let dagnummer = game_tijd_dagen % 7;
+        let dagnaam = WEEK[dagnummer as usize].to_string();
 
         if game_tijdsverschil >= 1 {
             vorigetijd = huidigetijd;
-            let datumstring = format!("dag {}: {}. {}:{}", game_tijd_dagen, dag_van_de_week, game_kloktijd_uren, game_kloktijd_minuten);
+            let datumstring = format!("dag {}: {}. {}:{}", game_tijd_dagen, dagnaam, game_kloktijd_uren, game_kloktijd_minuten);
             println!("{}", datumstring);
+        }
+
+        /*
+            minuut: u32,
+            actie: fn(&mut Game),
+            geldigheids_dagen: u8,
+            vorige_dag: u8
+        */
+
+        for actie_tijd in acties.iter() {
+            // 01111111 compleet gevulde week
+            //  zmdwdvz
+            // 11111000 week [dagnummer] naar links geschoven
+            // 01000000 getal 64. 2e bit is 1, omdat we de 2e bit checken
+
+            // 01000000
+            if actie_tijd.geldigheids_dagen << dagnummer & 64 == 64
+                && actie_tijd.vorige_dag != game_tijd_dagen
+                && minutentijd >= actie_tijd.minuut
+            {
+                actie_tijd.vorige_dag = game_tijd_dagen;
+
+                
+            }
         }
 
 
