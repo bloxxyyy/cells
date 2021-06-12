@@ -4,7 +4,7 @@ use std::time::{Duration, Instant};
 mod map;
 use map::map_part::map_part as tile;
 use map::Map;
-const TIJDFACTOR: f64 = 100.0;
+const TIJDFACTOR: f64 = 10000.0;
 
 struct Game {
     game_over: bool,
@@ -60,7 +60,6 @@ fn main() {
 
     let now = Instant::now();
 
-    let mut vorigetijd: u128 = now.elapsed().as_millis();
     /*
     uur / milliseconde = factor
 
@@ -100,17 +99,18 @@ fn main() {
         TijdActie {
             minuut: 720,
             actie: |game: &mut Game| {
-              // ga naar supermarkt
+                // ga naar supermarkt
+                println!("supermarkt time yay");
             },
-            gebeurd: true
+            geldigheids_dagen: 83,
+            vorige_dag: u32::MAX
         }          
-      ];
+    ];
 
     while !rl.window_should_close() {
         let huidigetijd = now.elapsed().as_millis();
-        let tijdsverschil = huidigetijd - vorigetijd;
+
         // in game minuten
-        let game_tijdsverschil = irl_naar_gametijd_minuten(tijdsverschil);
         let game_tijd_minuten = irl_naar_gametijd_minuten(huidigetijd);
         let game_tijd_uren = game_tijd_minuten / 60;
         let game_tijd_dagen = game_tijd_uren / 24;
@@ -124,20 +124,11 @@ fn main() {
         let dagnummer = game_tijd_dagen % 7;
         let dagnaam = WEEK[dagnummer as usize].to_string();
 
-        if game_tijdsverschil >= 1 {
-            vorigetijd = huidigetijd;
-            let datumstring = format!("dag {}: {}. {}:{}", game_tijd_dagen, dagnaam, game_kloktijd_uren, game_kloktijd_minuten);
-            println!("{}", datumstring);
-        }
+        let datumstring = format!("dag {}: {}. {}:{}", game_tijd_dagen, dagnaam, game_kloktijd_uren, game_kloktijd_minuten);
 
-        /*
-            minuut: u32,
-            actie: fn(&mut Game),
-            geldigheids_dagen: u8,
-            vorige_dag: u8
-        */
 
-        for actie_tijd in acties.iter() {
+
+        for actie_tijd in &mut acties {
             // 01111111 compleet gevulde week
             //  zmdwdvz
             // 11111000 week [dagnummer] naar links geschoven
@@ -150,7 +141,9 @@ fn main() {
             {
                 actie_tijd.vorige_dag = game_tijd_dagen;
 
-                
+                println!("{}", datumstring);
+
+                (actie_tijd.actie)(&mut game);
             }
         }
 
