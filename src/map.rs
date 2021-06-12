@@ -28,12 +28,12 @@ impl Map {
     pub fn draw_map(self, mut d: raylib::prelude::RaylibDrawHandle) {
         for y in 0..MAP_SIZE {
             for x in 0..MAP_SIZE {
-                let dist_x = part::Part_SIZE * x as i32;
-                let dist_y = part::Part_SIZE * y as i32;
+                let dist_x = part::PART_SIZE * x as i32;
+                let dist_y = part::PART_SIZE * y as i32;
                 match self.size[x as usize][y as usize].part_type {
-                    part::TileType::Empty => d.draw_rectangle(dist_x as i32, dist_y as i32, part::Part_SIZE, part::Part_SIZE, Color::BLACK),
-                    part::TileType::House => d.draw_rectangle(dist_x as i32, dist_y as i32, part::Part_SIZE, part::Part_SIZE, Color::PINK),
-                    part::TileType::Market => d.draw_rectangle(dist_x as i32, dist_y as i32, part::Part_SIZE, part::Part_SIZE, Color::YELLOW)
+                    part::TileType::Empty => d.draw_rectangle(dist_x as i32, dist_y as i32, part::PART_SIZE, part::PART_SIZE, Color::BLACK),
+                    part::TileType::House => d.draw_rectangle(dist_x as i32, dist_y as i32, part::PART_SIZE, part::PART_SIZE, Color::PINK),
+                    part::TileType::Market => d.draw_rectangle(dist_x as i32, dist_y as i32, part::PART_SIZE, part::PART_SIZE, Color::YELLOW)
                 }
             }
         }
