@@ -29,45 +29,47 @@
 pub mod time {
     use std::time::{Instant};
 
-    const TIJDFACTOR: f64 = 100.0;
+    const WEEK: [&str; 7] = [
+        "zondag",
+        "maandag",
+        "dinsdag",
+        "woensdag",
+        "donderdag",
+        "vrijdag",
+        "zaterdag"
+    ];
+
+    const TIJDFACTOR: f64 = 10000.0;
     
     #[derive(Copy, Clone)]
     pub struct Time {
         pub now: std::time::Instant,
-        pub vorigetijd: u128
+        pub dagnummer : u32,
+        pub game_tijd_dagen: u32,
+        pub minutentijd: u32
     }
 
     impl Time {
         pub fn default() -> Time {
-            Time {now: Instant::now(), vorigetijd: Instant::now().elapsed().as_millis()}
+            Time {now: Instant::now(), dagnummer: 0, game_tijd_dagen: 0, minutentijd: 0}
         }
 
-        pub fn update_time(mut self, now: std::time::Instant, vorigetijd: u128) {
+        pub fn update_time(mut self, now: std::time::Instant) {
             let huidigetijd = now.elapsed().as_millis();
-            let tijdsverschil = huidigetijd - vorigetijd;
+
             // in game minuten
-            let game_tijdsverschil = irl_naar_gametijd_minuten(tijdsverschil);
             let game_tijd_minuten = irl_naar_gametijd_minuten(huidigetijd);
             let game_tijd_uren = game_tijd_minuten / 60;
-            let game_tijd_dagen = game_tijd_uren / 24;
+            self.game_tijd_dagen = game_tijd_uren / 24;
+
+            self.minutentijd = game_tijd_minuten % (60 * 24);
             
             let game_kloktijd_minuten = game_tijd_minuten % 60;
             let game_kloktijd_uren = game_tijd_uren % 24;
-            let dag_van_de_week = [
-                "zondag",
-                "maandag",
-                "dinsdag",
-                "woensdag",
-                "donderdag",
-                "vrijdag",
-                "zaterdag"
-            ][(game_tijd_dagen % 7) as usize].to_string();
+            self.dagnummer = self.game_tijd_dagen % 7;
+            let dagnaam = WEEK[self.dagnummer as usize].to_string();
 
-            if game_tijdsverschil >= 1 {
-                self.vorigetijd = huidigetijd;
-                let datumstring = format!("dag {}: {}. {}:{}", game_tijd_dagen, dag_van_de_week, game_kloktijd_uren, game_kloktijd_minuten);
-                println!("{}", datumstring);
-            }
+            let datumstring = format!("dag {}: {}. {}:{}", self.game_tijd_dagen, dagnaam, game_kloktijd_uren, game_kloktijd_minuten);
         }
     }
 

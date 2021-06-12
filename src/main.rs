@@ -14,6 +14,14 @@ struct Game {
     time: Time,
 }
 
+#[derive(Copy, Clone)]
+struct TijdActie {
+    minuut: u32,
+    actie: fn(&mut Game),
+    geldigheids_dagen: u8,
+    vorige_dag: u32
+}
+
 impl Default for Game {
     fn default() -> Game {
         let game_over = false;
@@ -36,24 +44,62 @@ impl Default for Game {
             time
         }
     }
-}
+}       
 
 fn main() {
     let mut game = Game::default();
     let (mut rl, thread) = raylib::init().size(640, 480).title("Cells").build();
+
+    let mut acties: [TijdActie; 2] = [
+        TijdActie {
+            minuut: 720,
+            actie: |game: &mut Game| {
+                // ga naar supermarkt
+                println!("supermarkt time yay");
+            },
+            geldigheids_dagen: 83,
+            vorige_dag: u32::MAX
+        },
+        TijdActie {
+            minuut: 540,
+            actie: |game: &mut Game| {
+                // ga naar supermarkt
+                println!("school time cool time");
+            },
+            geldigheids_dagen: 62,
+            vorige_dag: u32::MAX
+        }     
+    ];
+
     while !rl.window_should_close() {
-        update_game(&mut game, &rl);
+        update_game(&mut game, &rl, acties);
         draw_game(&game, &mut rl, &thread);
     }
 }
 
-fn update_game(game: &mut Game, rl: &RaylibHandle) {
-    game.time.update_time(game.time.now, game.time.vorigetijd);
+fn update_game(game: &mut Game, rl: &RaylibHandle, acties: [TijdActie; 2]) {
+    game.time.update_time(game.time.now);
+
+    for actie_tijd in acties.iter() {
+        // 01111111 compleet gevulde week
+        //  zmdwdvz
+        // 11111000 week [dagnummer] naar links geschoven
+        // 01000000 getal 64. 2e bit is 1, omdat we de 2e bit checken
+
+        // 01000000
+        if actie_tijd.geldigheids_dagen << game.time.dagnummer & 64 == 64
+            && actie_tijd.vorige_dag != game.time.game_tijd_dagen
+            && game.time.minutentijd >= actie_tijd.minuut
+        {
+            actie_tijd.vorige_dag = game.time.game_tijd_dagen;
+
+            (actie_tijd.actie)(&mut game);
+        }
+    }
 }
 
 fn draw_game(game: &Game, rl: &mut RaylibHandle, thread: &RaylibThread) {
     let mut d = rl.begin_drawing(thread);
     d.clear_background(Color::RAYWHITE);
     game.map.draw_map(d);
-    //d.draw_circle(32, 32, 8.0, Color::GRAY);
 }
