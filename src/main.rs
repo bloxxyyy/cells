@@ -95,7 +95,7 @@ fn main() {
     // minuut gametime per seconde real life time;
 
 
-    let mut acties: [TijdActie; 1] = [
+    let mut acties: [TijdActie; 2] = [
         TijdActie {
             minuut: 720,
             actie: |game: &mut Game| {
@@ -104,7 +104,16 @@ fn main() {
             },
             geldigheids_dagen: 83,
             vorige_dag: u32::MAX
-        }          
+        },
+        TijdActie {
+            minuut: 540,
+            actie: |game: &mut Game| {
+                // ga naar supermarkt
+                println!("school time cool time");
+            },
+            geldigheids_dagen: 62,
+            vorige_dag: u32::MAX
+        }     
     ];
 
     while !rl.window_should_close() {
@@ -116,8 +125,6 @@ fn main() {
         let game_tijd_dagen = game_tijd_uren / 24;
 
         let minutentijd = game_tijd_minuten % (60 * 24);
-
-        let dag_is_even = game_tijd_dagen % 2 == 0;
         
         let game_kloktijd_minuten = game_tijd_minuten % 60;
         let game_kloktijd_uren = game_tijd_uren % 24;
@@ -125,8 +132,6 @@ fn main() {
         let dagnaam = WEEK[dagnummer as usize].to_string();
 
         let datumstring = format!("dag {}: {}. {}:{}", game_tijd_dagen, dagnaam, game_kloktijd_uren, game_kloktijd_minuten);
-
-
 
         for actie_tijd in &mut acties {
             // 01111111 compleet gevulde week
@@ -140,8 +145,6 @@ fn main() {
                 && minutentijd >= actie_tijd.minuut
             {
                 actie_tijd.vorige_dag = game_tijd_dagen;
-
-                println!("{}", datumstring);
 
                 (actie_tijd.actie)(&mut game);
             }
