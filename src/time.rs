@@ -54,7 +54,7 @@ pub mod time {
             Time {now: Instant::now(), dagnummer: 0, game_tijd_dagen: 0, minutentijd: 0}
         }
 
-        pub fn update_time(mut self, now: std::time::Instant) {
+        pub fn update_time(mut self, now: std::time::Instant) -> Time {
             let huidigetijd = now.elapsed().as_millis();
 
             // in game minuten
@@ -70,6 +70,7 @@ pub mod time {
             let dagnaam = WEEK[self.dagnummer as usize].to_string();
 
             let datumstring = format!("dag {}: {}. {}:{}", self.game_tijd_dagen, dagnaam, game_kloktijd_uren, game_kloktijd_minuten);
+            Time {now: now, dagnummer: self.dagnummer, game_tijd_dagen: self.game_tijd_dagen, minutentijd: self.minutentijd}
         }
     }
 

@@ -72,15 +72,15 @@ fn main() {
     ];
 
     while !rl.window_should_close() {
-        update_game(&mut game, &rl, acties);
+        update_game(&mut game, &rl, &mut acties);
         draw_game(&game, &mut rl, &thread);
     }
 }
 
-fn update_game(game: &mut Game, rl: &RaylibHandle, acties: [TijdActie; 2]) {
-    game.time.update_time(game.time.now);
+fn update_game(game: &mut Game, rl: &RaylibHandle, acties: &mut [TijdActie; 2]) {
+    game.time = game.time.update_time(game.time.now); // guess we will update time by reasigning it?
 
-    for actie_tijd in acties.iter() {
+    for actie_tijd in acties.iter_mut() {
         // 01111111 compleet gevulde week
         //  zmdwdvz
         // 11111000 week [dagnummer] naar links geschoven
@@ -92,8 +92,7 @@ fn update_game(game: &mut Game, rl: &RaylibHandle, acties: [TijdActie; 2]) {
             && game.time.minutentijd >= actie_tijd.minuut
         {
             actie_tijd.vorige_dag = game.time.game_tijd_dagen;
-
-            (actie_tijd.actie)(&mut game);
+            (actie_tijd.actie)(game);
         }
     }
 }
