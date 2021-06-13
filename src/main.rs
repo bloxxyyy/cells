@@ -70,26 +70,26 @@ fn main() {
     let mut game = Game::default();
     let (mut rl, thread) = raylib::init().size(640, 480).title("Cells").build();
 
-    let mut acties: [TijdActie; 2] = [
-        TijdActie {
-            minuut: 720,
-            actie: |game: &mut Game| {
-                // ga naar supermarkt
-                println!("supermarkt time yay");
-            },
-            geldigheids_dagen: 83,
-            vorige_dag: u32::MAX
-        },
-        TijdActie {
-            minuut: 540,
-            actie: |game: &mut Game| {
-                // ga naar supermarkt
-                println!("school time cool time");
-            },
-            geldigheids_dagen: 62,
-            vorige_dag: u32::MAX
-        }     
-    ];
+/*
+* For each places_to_visit in Human, create an TijdActie.
+* Zet de actie buiten de TijdActie.
+*/
+
+    let mut acties = Vec::new();
+    for human in game.humans.humans.iter() {
+        for place in human.places_to_visit.iter() {
+            acties.push(
+                TijdActie {
+                    minuut: 720,
+                    actie: |game: &mut Game| {
+                        println!("Some Action! yay");
+                    },
+                    geldigheids_dagen: 83,
+                    vorige_dag: u32::MAX
+                }
+            );
+        }
+    }
 
     while !rl.window_should_close() {
         update_game(&mut game, &rl, &mut acties);
@@ -97,7 +97,7 @@ fn main() {
     }
 }
 
-fn update_game(game: &mut Game, rl: &RaylibHandle, acties: &mut [TijdActie; 2]) {
+fn update_game(game: &mut Game, rl: &RaylibHandle, acties: &mut std::vec::Vec<TijdActie>) {
     game.time = game.time.update_time(game.time.now); // guess we will update time by reasigning it?
 
     for actie_tijd in acties.iter_mut() {
