@@ -7,11 +7,15 @@ use map::Map;
 mod time;
 use time::time::*;
 
+mod human;
+use human::human::*;
+
 struct Game {
     game_over: bool,
     pause: bool,
     map: Map,
     time: Time,
+    humans: human::human::Humans
 }
 
 #[derive(Copy, Clone)]
@@ -23,6 +27,7 @@ struct TijdActie {
 }
 
 impl Default for Game {
+
     fn default() -> Game {
         let game_over = false;
         let pause = false;
@@ -36,12 +41,27 @@ impl Default for Game {
         };
         
         map.set_map();
+        let humans = human::human::Humans {
+             humans: [
+                Human {
+                    home: Position {x: 48, y: 64},
+                    places_to_visit: [
+                        PlaceToVisit {
+                        position: Position {x: 64, y: 64},
+                        visit_time_minuut: 520,
+                        leave_time_minuut: 860
+                        }
+                    ]
+                }
+            ]
+        };
 
         Game {
             game_over,
             pause,
             map,
-            time
+            time,
+            humans
         }
     }
 }       
@@ -100,5 +120,13 @@ fn update_game(game: &mut Game, rl: &RaylibHandle, acties: &mut [TijdActie; 2]) 
 fn draw_game(game: &Game, rl: &mut RaylibHandle, thread: &RaylibThread) {
     let mut d = rl.begin_drawing(thread);
     d.clear_background(Color::RAYWHITE);
-    game.map.draw_map(d);
+    d = game.map.draw_map(d);
+    //game.humans.draw_humans(d);
+
+    for human in game.humans.humans.iter() {
+        let x = human.home.x;
+        let y = human.home.y;
+        println!("{} {}", x, y);
+        d.draw_circle(x as i32, y as i32, HUMAN_SIZE as f32, Color::DARKPURPLE)
+    }
 }

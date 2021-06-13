@@ -3,7 +3,7 @@ pub use map_part::map_part as part;
 
 use raylib::prelude::*;
 
-pub const MAP_SIZE: u8 = 12;
+pub const MAP_SIZE: u8 = 16;
 
 #[derive(Copy, Clone)]
 pub struct Map {
@@ -25,7 +25,7 @@ impl Map {
         }
     }
 
-    pub fn draw_map(self, mut d: raylib::prelude::RaylibDrawHandle) {
+    pub fn draw_map(self, mut d: raylib::prelude::RaylibDrawHandle) -> raylib::prelude::RaylibDrawHandle {
         for y in 0..MAP_SIZE {
             for x in 0..MAP_SIZE {
                 let dist_x = part::PART_SIZE * x as i32;
@@ -37,5 +37,7 @@ impl Map {
                 }
             }
         }
-     }
+
+        d
+    }
 }
