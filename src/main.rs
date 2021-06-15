@@ -97,7 +97,7 @@ fn main() {
 
     let mut acties: [TijdActie; 2] = [
         TijdActie {
-            minuut: 720,
+            minuut: 60 * 9 + 30,
             actie: |game: &mut Game| {
                 // ga naar supermarkt
                 println!("supermarkt time yay");
@@ -106,12 +106,12 @@ fn main() {
             vorige_dag: u32::MAX
         },
         TijdActie {
-            minuut: 540,
+            minuut: 60 * 12 + 00,
             actie: |game: &mut Game| {
                 // ga naar supermarkt
                 println!("school time cool time");
             },
-            geldigheids_dagen: 62,
+            geldigheids_dagen: 190,
             vorige_dag: u32::MAX
         }     
     ];
@@ -149,7 +149,6 @@ fn main() {
                 (actie_tijd.actie)(&mut game);
             }
         }
-
 
         update_game(&mut game, &rl);
         draw_game(&game, &mut rl, &thread);
