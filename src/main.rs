@@ -15,10 +15,9 @@ struct Game {
     pause: bool,
     map: Map,
     time: Time,
-    humans: human::human::Humans
+    humans: Humans
 }
 
-#[derive(Copy, Clone)]
 struct TijdActie {
     minuut: u32,
     actie: fn(&mut Game),
@@ -42,14 +41,15 @@ impl Default for Game {
         
         map.set_map();
         let humans = human::human::Humans {
-             humans: [
+             humans: vec![
                 Human {
-                    home: Position {x: 48, y: 64},
-                    places_to_visit: [
+                    home: Vector2 {x: 48.0, y: 64.0},
+                    positie: Vector2 {x: 48.0, y: 64.0},
+                    places_to_visit: vec![
                         PlaceToVisit {
-                        position: Position {x: 64, y: 64},
-                        visit_time_minuut: 520,
-                        leave_time_minuut: 860
+                            positie: Vector2 {x: 64.0, y: 64.0},
+                            visit_time_minuut: 520,
+                            leave_time_minuut: 860
                         }
                     ]
                 }
@@ -82,7 +82,7 @@ fn main() {
                 TijdActie {
                     minuut: 720,
                     actie: |game: &mut Game| {
-                        println!("Some Action! yay");
+                        
                     },
                     geldigheids_dagen: 83,
                     vorige_dag: u32::MAX
@@ -92,13 +92,13 @@ fn main() {
     }
 
     while !rl.window_should_close() {
-        update_game(&mut game, &rl, &mut acties);
+        update_game(&mut game, &mut acties);
         draw_game(&game, &mut rl, &thread);
     }
 }
 
-fn update_game(game: &mut Game, rl: &RaylibHandle, acties: &mut std::vec::Vec<TijdActie>) {
-    game.time = game.time.update_time(game.time.now); // guess we will update time by reasigning it?
+fn update_game(game: &mut Game, acties: &mut std::vec::Vec<TijdActie>) {
+    game.time = game.time.update_time(game.time.now); // guess we will update time by reassigning it?
 
     for actie_tijd in acties.iter_mut() {
         // 01111111 compleet gevulde week
@@ -120,13 +120,12 @@ fn update_game(game: &mut Game, rl: &RaylibHandle, acties: &mut std::vec::Vec<Ti
 fn draw_game(game: &Game, rl: &mut RaylibHandle, thread: &RaylibThread) {
     let mut d = rl.begin_drawing(thread);
     d.clear_background(Color::RAYWHITE);
-    d = game.map.draw_map(d);
-    //game.humans.draw_humans(d);
+    game.map.draw_map(&mut d);
+    game.humans.draw_humans(&mut d);
 
     for human in game.humans.humans.iter() {
         let x = human.home.x;
         let y = human.home.y;
-        println!("{} {}", x, y);
         d.draw_circle(x as i32, y as i32, HUMAN_SIZE as f32, Color::DARKPURPLE)
     }
 }
