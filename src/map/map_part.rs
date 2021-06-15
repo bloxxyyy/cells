@@ -1,5 +1,5 @@
 pub mod map_part {
-    pub const PART_SIZE: i32 = 16;
+    pub const PART_SIZE: i32 = 32;
 
     #[derive(Copy, Clone)]
     pub struct Part {
