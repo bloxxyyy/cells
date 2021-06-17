@@ -9,15 +9,7 @@ pub mod human {
 
     pub struct Human {
         pub home: Vector2,
-        pub positie: Vector2,
-        pub places_to_visit: Vec<PlaceToVisit>
-    }
-
-    #[derive(Copy, Clone)]
-    pub struct PlaceToVisit {
-        pub positie: Vector2,
-        pub visit_time_minuut: u32,
-        pub leave_time_minuut: u32
+        pub positie: Vector2
     }
 
     impl Human {

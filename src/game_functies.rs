@@ -18,7 +18,7 @@ pub fn update_game(game: &mut Game, acties: &mut Vec<TijdActie>) {
             && game.time.minutentijd >= actie_tijd.minuut
         {
             actie_tijd.vorige_dag = game.time.game_tijd_dagen;
-            (actie_tijd.actie)(game);
+            
         }
     }
 }

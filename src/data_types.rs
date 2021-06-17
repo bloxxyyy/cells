@@ -13,11 +13,12 @@ pub struct Game {
     pub humans: Humans,
 }
 
-pub struct TijdActie {
+pub struct TijdActie<'f> {
     pub minuut: u32,
-    pub actie: fn(&mut Game),
+    pub locatie: Vector2,
     pub geldigheids_dagen: u8,
     pub vorige_dag: u32,
+    pub personen: Vec<&'f mut Human>
 }
 
 impl Default for Game {
@@ -37,11 +38,6 @@ impl Default for Game {
             humans: vec![Human {
                 home: Vector2 { x: 48.0, y: 64.0 },
                 positie: Vector2 { x: 48.0, y: 64.0 },
-                places_to_visit: vec![PlaceToVisit {
-                    positie: Vector2 { x: 64.0, y: 64.0 },
-                    visit_time_minuut: 520,
-                    leave_time_minuut: 860,
-                }],
             }],
         };
 
