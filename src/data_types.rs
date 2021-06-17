@@ -10,7 +10,6 @@ pub struct Game {
     pub pause: bool,
     pub map: Map,
     pub time: Time,
-    pub humans: Humans,
 }
 
 pub struct TijdActie<'f> {
@@ -34,19 +33,12 @@ impl Default for Game {
             }; MAP_SIZE as usize]; MAP_SIZE as usize],
         };
         map.set_map();
-        let humans = Humans {
-            humans: vec![Human {
-                home: Vector2 { x: 48.0, y: 64.0 },
-                positie: Vector2 { x: 48.0, y: 64.0 },
-            }],
-        };
 
         Game {
             game_over,
             pause,
             map,
             time,
-            humans,
         }
     }
 }

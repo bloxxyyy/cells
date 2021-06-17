@@ -7,6 +7,18 @@ pub mod human {
         pub humans: Vec<Human>
     }
 
+    impl Default for Humans {
+        fn default() -> Humans {
+            let humans = Humans {
+                humans: vec![Human {
+                    home: Vector2 { x: 48.0, y: 64.0 },
+                    positie: Vector2 { x: 48.0, y: 64.0 },
+                }],
+            };
+            humans
+        }
+    }
+
     pub struct Human {
         pub home: Vector2,
         pub positie: Vector2

@@ -6,20 +6,14 @@ mod data_types;
 
 use game_functies::*;
 use data_types::*;
+use human::human::*;
 
 use raylib::prelude::*;
 
-fn main() {
-    let mut game = Game::default();
-    let (mut rl, thread) = raylib::init().size(640, 480).title("Cells").build();
-
-/*
-* For each places_to_visit in Human, create an TijdActie.
-* Zet de actie buiten de TijdActie.
-*/
-
+fn handleActions(humans: &mut Humans) -> std::vec::Vec<data_types::TijdActie> {
     let mut acties = Vec::new();
-    for human in game.humans.humans.iter_mut() {
+    for mut human in humans.humans.iter_mut() {
+        let mut h = human;
         acties.push(
             TijdActie {
                 minuut: 720,
@@ -27,17 +21,25 @@ fn main() {
                     x: 69.0,
                     y: 69.0
                 },
-                personen: vec![
-                    &mut human
-                ],
+                personen: vec![h],
                 geldigheids_dagen: 83,
                 vorige_dag: u32::MAX
             }
         );
     }
+    return acties;
+}
+
+fn main() {
+    let mut game = Game::default();
+    let (mut rl, thread) = raylib::init().size(640, 480).title("Cells").build();
+
+    let mut humans = Humans::default();
+
+    let mut acties = handleActions(&mut humans);
 
     while !rl.window_should_close() {
         update_game(&mut game, &mut acties);
-        draw_game(&game, &mut rl, &thread);
+        draw_game(&mut acties, &game, &mut rl, &thread);
     }
 }
